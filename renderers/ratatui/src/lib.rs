@@ -134,10 +134,8 @@ fn fill_rect(buf: &mut Buffer, rect: Rect, color: Color) {
     for y in rect.y..rect.y + rect.height {
         for x in rect.x..rect.x + rect.width {
             if let Some(cell) = buf.cell_mut((x, y)) {
+                cell.set_char(' ');
                 cell.set_style(style);
-                if cell.symbol() == "" {
-                    cell.set_char(' ');
-                }
             }
         }
     }
