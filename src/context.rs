@@ -6,15 +6,21 @@ use crate::layout::*;
 use crate::render::*;
 use crate::types::*;
 
+/// Function signature for custom error handlers.
 pub type ErrorHandlerFunction = fn(ErrorData);
 
+/// Error information passed to the [`ErrorHandlerFunction`].
 #[derive(Debug, Clone)]
 pub struct ErrorData {
+    /// The category of error.
     pub error_type: ErrorType,
+    /// A human-readable description of the error.
     pub error_text: String,
+    /// User data that was registered with [`Context::set_error_handler`].
     pub user_data: usize,
 }
 
+/// Categories of errors the layout engine can report.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum ErrorType {
@@ -31,6 +37,16 @@ pub enum ErrorType {
 
 fn default_error_handler(_error: ErrorData) {}
 
+/// The main layout context.
+///
+/// `Context` holds all state needed for a single layout pass. Create one with
+/// [`Context::new`], build your UI tree between [`begin_layout`](Context::begin_layout)
+/// and [`end_layout`](Context::end_layout), then consume the resulting
+/// [`RenderCommand`] list.
+///
+/// The context is designed to be reused across frames — call
+/// [`begin_layout`](Context::begin_layout) at the start of each frame to
+/// reset ephemeral state while preserving caches.
 #[derive(Clone)]
 pub struct Context {
     pub max_element_count: i32,
@@ -97,10 +113,13 @@ pub struct Context {
 }
 
 impl Context {
+    /// Creates a new context with default capacity (8 192 elements, 16 384
+    /// cached text words).
     pub fn new(layout_dimensions: Dimensions) -> Self {
         Self::with_capacity(layout_dimensions, 8192, 16384)
     }
 
+    /// Creates a new context with explicit capacity limits.
     pub fn with_capacity(
         layout_dimensions: Dimensions,
         max_element_count: i32,
@@ -163,6 +182,7 @@ impl Context {
         ctx
     }
 
+    /// Registers a custom error handler.
     pub fn set_error_handler(&mut self, handler: ErrorHandlerFunction, user_data: usize) {
         self.error_handler = handler;
         self.error_handler_user_data = user_data;
@@ -196,14 +216,21 @@ impl Context {
         self.dynamic_string_data.clear();
     }
 
+    /// Updates the viewport dimensions used for layout.
     pub fn set_layout_dimensions(&mut self, dimensions: Dimensions) {
         self.layout_dimensions = dimensions;
     }
 
+    /// Returns the current viewport dimensions.
     pub fn get_layout_dimensions(&self) -> Dimensions {
         self.layout_dimensions
     }
 
+    /// Sets the text measurement callback.
+    ///
+    /// This **must** be called before any [`text`](Context::text) elements
+    /// are used, otherwise the layout engine cannot determine text
+    /// dimensions.
     pub fn set_measure_text_function(
         &mut self,
         func: MeasureTextFunction,
@@ -213,6 +240,7 @@ impl Context {
         self.measure_text_user_data = user_data;
     }
 
+    /// Sets the callback used to query external scroll offsets.
     pub fn set_query_scroll_offset_function(
         &mut self,
         func: QueryScrollOffsetFunction,
@@ -222,38 +250,47 @@ impl Context {
         self.query_scroll_offset_user_data = user_data;
     }
 
+    /// Enables or disables the debug visualization overlay.
     pub fn set_debug_mode_enabled(&mut self, enabled: bool) {
         self.debug_mode_enabled = enabled;
     }
 
+    /// Returns `true` if debug mode is enabled.
     pub fn is_debug_mode_enabled(&self) -> bool {
         self.debug_mode_enabled
     }
 
+    /// Enables or disables offscreen element culling.
     pub fn set_culling_enabled(&mut self, enabled: bool) {
         self.disable_culling = !enabled;
     }
 
+    /// Enables or disables external scroll handling.
     pub fn set_external_scroll_handling_enabled(&mut self, enabled: bool) {
         self.external_scroll_handling_enabled = enabled;
     }
 
+    /// Returns the maximum number of elements this context can hold.
     pub fn get_max_element_count(&self) -> i32 {
         self.max_element_count
     }
 
+    /// Sets the maximum number of elements this context can hold.
     pub fn set_max_element_count(&mut self, count: i32) {
         self.max_element_count = count;
     }
 
+    /// Returns the maximum number of cached text measurement words.
     pub fn get_max_measure_text_cache_word_count(&self) -> i32 {
         self.max_measure_text_cache_word_count
     }
 
+    /// Sets the maximum number of cached text measurement words.
     pub fn set_max_measure_text_cache_word_count(&mut self, count: i32) {
         self.max_measure_text_cache_word_count = count;
     }
 
+    /// Clears the text measurement cache.
     pub fn reset_measure_text_cache(&mut self) {
         self.measure_text_hash_map_internal.clear();
         self.measure_text_hash_map_internal_free_list.clear();
@@ -267,6 +304,7 @@ impl Context {
     // Hash map operations
     // ========================================================================
 
+    /// Looks up an element's internal hash map entry by hashed ID.
     pub fn get_hash_map_item(&self, id: u32) -> Option<&LayoutElementHashMapItem> {
         let capacity = self.layout_elements_hash_map.len();
         if capacity == 0 {
@@ -288,6 +326,7 @@ impl Context {
         None
     }
 
+    /// Mutable version of [`get_hash_map_item`](Context::get_hash_map_item).
     pub fn get_hash_map_item_mut(&mut self, id: u32) -> Option<&mut LayoutElementHashMapItem> {
         let capacity = self.layout_elements_hash_map.len();
         if capacity == 0 {
@@ -398,6 +437,10 @@ impl Context {
         element_id
     }
 
+    /// Opens a new anonymous element and pushes it onto the layout stack.
+    ///
+    /// Prefer [`with_anonymous_element`](Context::with_anonymous_element) for
+    /// a closure-based API that automatically closes the element.
     pub fn open_element(&mut self) {
         if self.layout_elements.len() >= self.max_element_count as usize - 1
             || self.boolean_warnings.max_elements_exceeded
@@ -422,6 +465,11 @@ impl Context {
         self.layout_element_clip_element_ids[idx as usize] = clip_id;
     }
 
+    /// Opens a new element with an explicit ID and pushes it onto the layout
+    /// stack.
+    ///
+    /// Prefer [`with_element`](Context::with_element) for a closure-based API
+    /// that automatically closes the element.
     pub fn open_element_with_id(&mut self, element_id: ElementId) {
         if self.layout_elements.len() >= self.max_element_count as usize - 1
             || self.boolean_warnings.max_elements_exceeded
@@ -444,6 +492,7 @@ impl Context {
         self.layout_element_clip_element_ids[idx as usize] = clip_id;
     }
 
+    /// Applies an [`ElementDeclaration`] to the currently open element.
     pub fn configure_open_element(&mut self, declaration: &ElementDeclaration) {
         if self.boolean_warnings.max_elements_exceeded {
             return;
@@ -633,6 +682,8 @@ impl Context {
         }
     }
 
+    /// Closes the currently open element, computes its intrinsic size from
+    /// its children, and pops it from the layout stack.
     pub fn close_element(&mut self) {
         if self.boolean_warnings.max_elements_exceeded {
             return;
@@ -843,6 +894,8 @@ impl Context {
         }
     }
 
+    /// Opens a leaf text element, measures it, and immediately attaches it
+    /// to the current parent.
     pub fn open_text_element(&mut self, text: &str, text_config: &TextElementConfig) {
         if self.layout_elements.len() >= self.max_element_count as usize - 1
             || self.boolean_warnings.max_elements_exceeded
@@ -915,6 +968,10 @@ impl Context {
     // Begin / End Layout
     // ========================================================================
 
+    /// Starts a new layout pass.
+    ///
+    /// Call this at the beginning of each frame, then build your element tree,
+    /// and finish with [`end_layout`](Context::end_layout).
     pub fn begin_layout(&mut self) {
         self.initialize_ephemeral_memory();
         self.generation += 1;
@@ -947,6 +1004,8 @@ impl Context {
             });
     }
 
+    /// Finishes the layout pass, runs the layout algorithm, and returns the
+    /// list of render commands.
     pub fn end_layout(&mut self) -> Vec<RenderCommand> {
         self.close_element();
 
@@ -961,11 +1020,14 @@ impl Context {
         self.render_commands.clone()
     }
 
+    /// Begins a *shadow* layout pass that runs layout calculations without
+    /// producing render commands. Useful for pre-measuring content.
     pub fn begin_shadow_layout(&mut self) {
         self.shadow_layout_mode = true;
         self.begin_layout();
     }
 
+    /// Finishes a shadow layout pass.
     pub fn end_shadow_layout(&mut self) {
         self.close_element();
         if self.open_layout_element_stack.len() > 1 {
@@ -982,6 +1044,10 @@ impl Context {
     // Public element-building closure API
     // ========================================================================
 
+    /// Declares a named element, executes the `children` closure to build
+    /// its subtree, and closes the element automatically.
+    ///
+    /// This is the primary API for building UI trees.
     pub fn with_element(
         &mut self,
         id: ElementId,
@@ -994,6 +1060,8 @@ impl Context {
         self.close_element();
     }
 
+    /// Like [`with_element`](Context::with_element), but generates an
+    /// automatic ID instead of requiring one.
     pub fn with_anonymous_element(
         &mut self,
         declaration: ElementDeclaration,
@@ -1005,6 +1073,7 @@ impl Context {
         self.close_element();
     }
 
+    /// Adds a text leaf element to the currently open parent.
     pub fn text(&mut self, text: &str, config: &TextElementConfig) {
         self.open_text_element(text, config);
     }
@@ -1013,14 +1082,20 @@ impl Context {
     // Element ID helpers
     // ========================================================================
 
+    /// Creates a globally unique [`ElementId`] from a string label.
     pub fn id(&self, label: &str) -> ElementId {
         hash::hash_string(label, 0)
     }
 
+    /// Creates an indexed [`ElementId`], useful for elements generated in a
+    /// loop (e.g. list items).
     pub fn idi(&self, label: &str, index: u32) -> ElementId {
         hash::hash_string_with_offset(label, index, 0)
     }
 
+    /// Creates an [`ElementId`] scoped to the current parent element,
+    /// avoiding collisions with identically-named elements elsewhere in
+    /// the tree.
     pub fn id_local(&self, label: &str) -> ElementId {
         let parent_id = self.get_parent_element_id();
         hash::hash_string(label, parent_id)
@@ -1040,14 +1115,19 @@ impl Context {
     // Query functions
     // ========================================================================
 
+    /// Computes an [`ElementId`] from a string, equivalent to [`id`](Context::id).
     pub fn get_element_id(&self, id_string: &str) -> ElementId {
         hash::hash_string(id_string, 0)
     }
 
+    /// Computes an indexed [`ElementId`], equivalent to [`idi`](Context::idi).
     pub fn get_element_id_with_index(&self, id_string: &str, index: u32) -> ElementId {
         hash::hash_string_with_offset(id_string, index, 0)
     }
 
+    /// Queries an element's bounding box after layout has been computed.
+    ///
+    /// Returns [`ElementData`] with `found: true` if the element exists.
     pub fn get_element_data(&self, id: &ElementId) -> ElementData {
         if let Some(item) = self.get_hash_map_item(id.id) {
             ElementData {
@@ -1059,6 +1139,7 @@ impl Context {
         }
     }
 
+    /// Returns a reference to a render command by index.
     pub fn get_render_command(&self, index: usize) -> Option<&RenderCommand> {
         self.render_commands.get(index)
     }

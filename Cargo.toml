@@ -15,4 +15,8 @@ readme = "README.md"
 keywords = ["ui", "layout", "gui", "tui", "declarative"]
 categories = ["gui", "rendering"]
 
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
 [dependencies]

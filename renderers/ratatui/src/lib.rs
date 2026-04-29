@@ -1,20 +1,46 @@
+//! Ratatui renderer for [Cobogo](https://crates.io/crates/cobogo).
+//!
+//! Consumes the [`RenderCommand`] list produced by
+//! [`Context::end_layout`](cobogo::context::Context::end_layout) and draws
+//! it into a ratatui [`Buffer`].
+//!
+//! # Usage
+//!
+//! ```rust,no_run
+//! use cobogo_renderer_ratatui::CobogoRatatuiRenderer;
+//!
+//! // After computing layout:
+//! let mut renderer = CobogoRatatuiRenderer::new();
+//! // Inside your ratatui render callback:
+//! // renderer.render(&render_commands, frame.buffer_mut());
+//! ```
+
 use cobogo::render::{RenderCommand, RenderData};
 use cobogo::types::{BoundingBox, Color as ClayColor};
 use ratatui::buffer::Buffer;
 use ratatui::layout::Rect;
 use ratatui::style::{Color, Style};
 
+/// Renders Cobogo layout output into a ratatui terminal buffer.
+///
+/// Maintains an internal clip stack to handle nested clip regions.
 pub struct CobogoRatatuiRenderer {
     clip_stack: Vec<Rect>,
 }
 
 impl CobogoRatatuiRenderer {
+    /// Creates a new renderer.
     pub fn new() -> Self {
         Self {
             clip_stack: Vec::new(),
         }
     }
 
+    /// Renders a slice of [`RenderCommand`]s into the given ratatui
+    /// [`Buffer`].
+    ///
+    /// The renderer processes commands in order, handling rectangles, text,
+    /// borders, images (placeholder), custom elements, and clip regions.
     pub fn render(&mut self, commands: &[RenderCommand], buf: &mut Buffer) {
         self.clip_stack.clear();
 
