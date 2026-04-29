@@ -2,11 +2,14 @@
 name = "cobogo-renderer-ratatui"
 version = "0.1.0"
 edition = "2024"
+rust-version = "1.85"
 description = "Ratatui renderer for Cobogo UI layout library"
 license = "Zlib"
 repository = "https://github.com/JoaoHenriqueBarbosa/cobogo"
-keywords = ["ui", "layout", "tui", "ratatui"]
-categories = ["gui"]
+homepage = "https://github.com/JoaoHenriqueBarbosa/cobogo"
+readme = "../../README.md"
+keywords = ["ui", "layout", "tui", "ratatui", "renderer"]
+categories = ["gui", "command-line-interface"]
 
 [dependencies]
 cobogo = { version = "0.1.0", path = "../.." }

@@ -6,10 +6,13 @@ resolver = "3"
 name = "cobogo"
 version = "0.1.0"
 edition = "2024"
+rust-version = "1.85"
 description = "A UI layout library for Rust, ported from Clay"
 license = "Zlib"
 repository = "https://github.com/JoaoHenriqueBarbosa/cobogo"
-keywords = ["ui", "layout", "gui", "tui"]
-categories = ["gui"]
+homepage = "https://github.com/JoaoHenriqueBarbosa/cobogo"
+readme = "README.md"
+keywords = ["ui", "layout", "gui", "tui", "declarative"]
+categories = ["gui", "rendering"]
 
 [dependencies]
