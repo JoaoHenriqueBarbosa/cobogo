@@ -62,7 +62,12 @@ impl Theme {
     }
 }
 
-pub fn build_layout(app: &App, width: f32, height: f32) -> Vec<RenderCommand> {
+pub struct LayoutResult {
+    pub commands: Vec<RenderCommand>,
+    pub ctx: Context,
+}
+
+pub fn build_layout(app: &App, width: f32, height: f32) -> LayoutResult {
     let mut ctx = Context::new(Dimensions::new(width, height));
     ctx.set_measure_text_function(measure_text, 0);
 
@@ -88,7 +93,8 @@ pub fn build_layout(app: &App, width: f32, height: f32) -> Vec<RenderCommand> {
         build_footer(ctx, app, &theme);
     });
 
-    ctx.end_layout()
+    let commands = ctx.end_layout();
+    LayoutResult { commands, ctx }
 }
 
 fn build_header(ctx: &mut Context, app: &App, theme: &Theme) {
@@ -461,6 +467,22 @@ fn build_footer(ctx: &mut Context, app: &App, theme: &Theme) {
             },
             ..Default::default()
         }, |_| {});
+
+        if !app.hover_element.is_empty() {
+            let hover_text = format!("[{}]", app.hover_element);
+            ctx.text(&hover_text, &TextElementConfig {
+                text_color: theme.accent,
+                font_size: 1,
+                ..Default::default()
+            });
+        }
+
+        let pos_text = format!("({},{})", app.mouse_pos.0, app.mouse_pos.1);
+        ctx.text(&pos_text, &TextElementConfig {
+            text_color: theme.text_dim,
+            font_size: 1,
+            ..Default::default()
+        });
 
         let mode = if app.theme_dark { "DARK" } else { "LIGHT" };
         ctx.text(mode, &TextElementConfig {
