@@ -1,6 +1,6 @@
 [package]
 name = "cobogo-renderer-ratatui"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 rust-version = "1.85"
 description = "Ratatui renderer for Cobogo UI layout library"
@@ -12,5 +12,5 @@ keywords = ["ui", "layout", "tui", "ratatui", "renderer"]
 categories = ["gui", "command-line-interface"]
 
 [dependencies]
-cobogo = { version = "0.1.1", path = "../.." }
+cobogo = { version = "0.1.2", path = "../.." }
 ratatui = ">=0.29"

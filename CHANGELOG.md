@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2](https://github.com/JoaoHenriqueBarbosa/cobogo/compare/cobogo-v0.1.1...cobogo-v0.1.2) - 2026-04-29
+
+### Other
+
+- Merge pull request #2 from JoaoHenriqueBarbosa/release-plz-2026-04-29T15-10-17Z
+
 ## [0.1.1](https://github.com/JoaoHenriqueBarbosa/cobogo/compare/cobogo-v0.1.0...cobogo-v0.1.1) - 2026-04-29
 
 ### Other
