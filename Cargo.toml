@@ -1,3 +1,7 @@
+[workspace]
+members = [".", "renderers/ratatui", "examples/tui-app"]
+resolver = "3"
+
 [package]
 name = "clay"
 version = "0.1.0"
