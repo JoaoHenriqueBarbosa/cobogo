@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3](https://github.com/JoaoHenriqueBarbosa/cobogo/compare/cobogo-renderer-ratatui-v0.1.2...cobogo-renderer-ratatui-v0.1.3) - 2026-04-29
+
+### Fixed
+
+- *(renderer-ratatui)* clear existing chars in fill_rect before painting
+
 ## [0.1.2](https://github.com/JoaoHenriqueBarbosa/cobogo/compare/cobogo-renderer-ratatui-v0.1.1...cobogo-renderer-ratatui-v0.1.2) - 2026-04-29
 
 ### Fixed
