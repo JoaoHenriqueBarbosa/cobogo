@@ -1,9 +1,9 @@
 use crate::App;
-use clay::context::Context;
-use clay::elements::*;
-use clay::layout::*;
-use clay::render::RenderCommand;
-use clay::types::*;
+use cobogo::context::Context;
+use cobogo::elements::*;
+use cobogo::layout::*;
+use cobogo::render::RenderCommand;
+use cobogo::types::*;
 
 fn measure_text(text: &str, config: &TextElementConfig, _user_data: usize) -> Dimensions {
     let width = text.len() as f32 * if config.font_size > 1 { 1.0 } else { 1.0 };

@@ -1,14 +1,14 @@
-use clay::render::{RenderCommand, RenderData};
-use clay::types::{BoundingBox, Color as ClayColor};
+use cobogo::render::{RenderCommand, RenderData};
+use cobogo::types::{BoundingBox, Color as ClayColor};
 use ratatui::buffer::Buffer;
 use ratatui::layout::Rect;
 use ratatui::style::{Color, Style};
 
-pub struct ClayRatatuiRenderer {
+pub struct CobogoRatatuiRenderer {
     clip_stack: Vec<Rect>,
 }
 
-impl ClayRatatuiRenderer {
+impl CobogoRatatuiRenderer {
     pub fn new() -> Self {
         Self {
             clip_stack: Vec::new(),
@@ -24,17 +24,17 @@ impl ClayRatatuiRenderer {
             match &cmd.render_data {
                 RenderData::Rectangle(data) => {
                     if let Some(clipped) = self.clip_rect(rect) {
-                        fill_rect(buf, clipped, clay_to_color(&data.background_color));
+                        fill_rect(buf, clipped, cobogo_to_color(&data.background_color));
                     }
                 }
                 RenderData::Text(data) => {
                     if let Some(clipped) = self.clip_rect(rect) {
-                        render_text(buf, clipped, &data.string_contents, clay_to_color(&data.text_color));
+                        render_text(buf, clipped, &data.string_contents, cobogo_to_color(&data.text_color));
                     }
                 }
                 RenderData::Border(data) => {
                     if let Some(clipped) = self.clip_rect(rect) {
-                        render_border(buf, clipped, clay_to_color(&data.color), &data.width);
+                        render_border(buf, clipped, cobogo_to_color(&data.color), &data.width);
                     }
                 }
                 RenderData::Image(_) => {
@@ -73,7 +73,7 @@ impl ClayRatatuiRenderer {
     }
 }
 
-impl Default for ClayRatatuiRenderer {
+impl Default for CobogoRatatuiRenderer {
     fn default() -> Self {
         Self::new()
     }
@@ -99,7 +99,7 @@ fn intersect(a: Rect, b: Rect) -> Rect {
     }
 }
 
-fn clay_to_color(c: &ClayColor) -> Color {
+fn cobogo_to_color(c: &ClayColor) -> Color {
     Color::Rgb(c.r as u8, c.g as u8, c.b as u8)
 }
 
@@ -140,7 +140,7 @@ fn render_border(
     buf: &mut Buffer,
     rect: Rect,
     color: Color,
-    width: &clay::types::BorderWidth,
+    width: &cobogo::types::BorderWidth,
 ) {
     let style = Style::default().fg(color);
 

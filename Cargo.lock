@@ -36,14 +36,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
 
 [[package]]
-name = "clay"
+name = "cobogo"
 version = "0.1.0"
 
 [[package]]
-name = "clay-renderer-ratatui"
+name = "cobogo-renderer-ratatui"
 version = "0.1.0"
 dependencies = [
- "clay",
+ "cobogo",
  "ratatui",
 ]
 
@@ -450,8 +450,8 @@ dependencies = [
 name = "tui-app"
 version = "0.1.0"
 dependencies = [
- "clay",
- "clay-renderer-ratatui",
+ "cobogo",
+ "cobogo-renderer-ratatui",
  "crossterm",
  "ratatui",
 ]

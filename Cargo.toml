@@ -3,7 +3,7 @@ members = [".", "renderers/ratatui", "examples/tui-app"]
 resolver = "3"
 
 [package]
-name = "clay"
+name = "cobogo"
 version = "0.1.0"
 edition = "2024"
 

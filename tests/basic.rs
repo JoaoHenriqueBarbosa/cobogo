@@ -1,7 +1,7 @@
-use clay::context::Context;
-use clay::elements::*;
-use clay::layout::*;
-use clay::types::*;
+use cobogo::context::Context;
+use cobogo::elements::*;
+use cobogo::layout::*;
+use cobogo::types::*;
 
 fn dummy_measure_text(text: &str, config: &TextElementConfig, _user_data: usize) -> Dimensions {
     Dimensions::new(text.len() as f32 * config.font_size as f32 * 0.6, config.font_size as f32 * 1.2)

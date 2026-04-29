@@ -1,8 +1,8 @@
 [package]
-name = "clay-renderer-ratatui"
+name = "cobogo-renderer-ratatui"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-clay = { path = "../.." }
+cobogo = { path = "../.." }
 ratatui = "0.29"

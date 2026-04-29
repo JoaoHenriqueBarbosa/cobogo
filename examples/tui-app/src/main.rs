@@ -11,8 +11,8 @@ use crossterm::{
 use ratatui::prelude::*;
 use std::io::stdout;
 
-use clay::types::*;
-use clay_renderer_ratatui::ClayRatatuiRenderer;
+use cobogo::types::*;
+use cobogo_renderer_ratatui::CobogoRatatuiRenderer;
 
 pub struct App {
     pub sidebar_visible: bool,
@@ -88,7 +88,7 @@ impl App {
         }
     }
 
-    fn handle_mouse_click(&mut self, ctx: &clay::context::Context, x: u16, y: u16) {
+    fn handle_mouse_click(&mut self, ctx: &cobogo::context::Context, x: u16, y: u16) {
         let pos = Vector2::new(x as f32, y as f32);
 
         // Check tabs
@@ -129,7 +129,7 @@ impl App {
         self.status_message = format!("Click at ({}, {})", x, y);
     }
 
-    fn handle_mouse_move(&mut self, ctx: &clay::context::Context, x: u16, y: u16) {
+    fn handle_mouse_move(&mut self, ctx: &cobogo::context::Context, x: u16, y: u16) {
         self.mouse_pos = (x, y);
         let pos = Vector2::new(x as f32, y as f32);
 
@@ -168,7 +168,7 @@ impl App {
         self.hover_element.clear();
     }
 
-    fn handle_scroll(&mut self, _ctx: &clay::context::Context, _x: u16, _y: u16, delta: i16) {
+    fn handle_scroll(&mut self, _ctx: &cobogo::context::Context, _x: u16, _y: u16, delta: i16) {
         if delta > 0 && self.selected_item > 0 {
             self.selected_item -= 1;
         } else if delta < 0 && self.selected_item < 5 {
@@ -192,8 +192,8 @@ fn main() -> std::io::Result<()> {
     let mut terminal = Terminal::new(CrosstermBackend::new(stdout()))?;
 
     let mut app = App::new();
-    let mut renderer = ClayRatatuiRenderer::new();
-    let mut last_layout: Option<clay::context::Context> = None;
+    let mut renderer = CobogoRatatuiRenderer::new();
+    let mut last_layout: Option<cobogo::context::Context> = None;
 
     loop {
         terminal.draw(|frame| {
