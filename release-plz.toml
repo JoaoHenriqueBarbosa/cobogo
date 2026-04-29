@@ -1,0 +1,11 @@
+[workspace]
+features_always_increment_minor = true
+semver_check = true
+publish_timeout = "10m"
+pr_labels = ["release"]
+
+# tui-app is an example, not a publishable crate
+[[package]]
+name = "tui-app"
+release = false
+publish = false
