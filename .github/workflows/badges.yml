@@ -16,7 +16,7 @@ jobs:
       - name: Compute metrics
         id: m
         run: |
-          TESTS=$(( $(grep -rn '#\[test\]' src renderers --include='*.rs' 2>/dev/null | wc -l) + $(grep -rn '#\[tokio::test\]' src renderers --include='*.rs' 2>/dev/null | wc -l) ))
+          TESTS=$(( $(grep -rn '#\[test\]' src tests --include='*.rs' 2>/dev/null | wc -l) + $(grep -rn '#\[tokio::test\]' src tests --include='*.rs' 2>/dev/null | wc -l) ))
           LOC=$(find . -path ./target -prune -o -name '*.rs' -print | xargs wc -l | tail -1 | awk '{print $1}')
           echo "tests=$TESTS" >> "$GITHUB_OUTPUT"
           echo "loc=$LOC" >> "$GITHUB_OUTPUT"
