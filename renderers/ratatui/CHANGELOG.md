@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4](https://github.com/JoaoHenriqueBarbosa/cobogo/compare/cobogo-renderer-ratatui-v0.1.3...cobogo-renderer-ratatui-v0.1.4) - 2026-07-04
+
+### Other
+
+- add project README and license
+
 ## [0.1.3](https://github.com/JoaoHenriqueBarbosa/cobogo/compare/cobogo-renderer-ratatui-v0.1.2...cobogo-renderer-ratatui-v0.1.3) - 2026-04-29
 
 ### Fixed
