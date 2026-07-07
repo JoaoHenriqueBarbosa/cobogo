@@ -7,4 +7,4 @@ edition = "2024"
 cobogo = { path = "../.." }
 cobogo-renderer-ratatui = { path = "../../renderers/ratatui" }
 ratatui = "0.29"
-crossterm = "0.28"
+crossterm = "0.29"
